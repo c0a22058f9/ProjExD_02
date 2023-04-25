@@ -11,7 +11,9 @@ delta = {
         pg.K_LEFT: (-1, 0), # 左の移動量
         pg.K_RIGHT: (+1, 0) # 右の移動量
         }
-kk_img = pg.image.load("ex02/fig/3.png")
+kk_img = pg.image.load("ex02/fig/3.png") # こうかとんの画像を読み込む
+
+#８方向の移動量のキーに対して、回転させた画像が値の辞書
 delta_kk_img = {  
             (0, -1):pg.transform.rotozoom(pg.transform.flip(kk_img,True,False), 90, 2.0),
             (+1, -1):pg.transform.rotozoom(pg.transform.flip(kk_img,True,False), 45, 2.0),

@@ -11,6 +11,24 @@ delta = {
         pg.K_LEFT: (-1, 0), # 左の移動量
         pg.K_RIGHT: (+1, 0) # 右の移動量
         }
+kk_img = pg.image.load("ex02/fig/3.png")
+delta_kk_img = {  
+            (0, -1):pg.transform.rotozoom(pg.transform.flip(kk_img,True,False), 90, 2.0),
+            (+1, -1):pg.transform.rotozoom(pg.transform.flip(kk_img,True,False), 45, 2.0),
+            (+1, 0):pg.transform.rotozoom(pg.transform.flip(kk_img,True,False), 0, 2.0),
+            (+1, +1):pg.transform.rotozoom(pg.transform.flip(kk_img,True,False), -45, 2.0),
+            (0, +1):pg.transform.rotozoom(pg.transform.flip(kk_img,True,False), -90, 2.0),
+            (-1, +1):pg.transform.rotozoom(kk_img, -45, 2.0),
+            (-1, 0):pg.transform.rotozoom(kk_img, 0, 2.0),
+            (-1, -1):pg.transform.rotozoom(kk_img, 45, 2.0)
+            }
+
+bb_imgs = []
+accs = [a for a in range(1,11)]
+for r in range(1,11):
+    bb_img = pg.Surface((20*r, 20*r))
+    pg.draw.circle(bb_img, (255, 0, 0), (10*r, 10*r), 10*r)
+    bb_imgs.append(bb_img)
 
 
 def check_bound(scr_rct: pg.Rect, obj_rct: pg.Rect) -> tuple[bool,bool]:
@@ -38,8 +56,9 @@ def main():
     screen = pg.display.set_mode((1600, 900))
     clock = pg.time.Clock()
     bg_img = pg.image.load("ex02/fig/pg_bg.jpg")
-    kk_img = pg.image.load("ex02/fig/3.png")
-    kk_img = pg.transform.rotozoom(kk_img, 0, 2.0)
+    kk_img = pg.transform.rotozoom(pg.image.load("ex02/fig/3.png"), 0, 2.0)
+    # kk_img_left = kk_img
+    # kk_img_right = pg.transform.flip(kk_img,True,False)
     kk_rct = kk_img.get_rect() # こうかとんのSurfaceに対するrectのSurfaceを取得
     kk_rct.center = 900,400 # こうかとんの座標の中央を900, 400に設定
     tmr = 0
@@ -52,6 +71,8 @@ def main():
     vx,vy = +1, +1 # 爆弾の移動用座標を作成
     bb_rct = bb_img.get_rect() # 爆弾のSurfaceに対するrectのSurfaceを取得
     bb_rct.center = x, y # 爆弾の中心座標をx, yに設定
+    avx, avy = vx*accs[min(tmr//1000, 9)], vy*accs[min(tmr//1000, 9)]
+    bb_img = bb_imgs[min(tmr//1000, 9)]
 
     while True:
         for event in pg.event.get():
@@ -64,6 +85,9 @@ def main():
         for k, mv in delta.items(): # 辞書deltaのkeyとvalueをk, mvに入れる
             if key_lst[k]: # 矢印キーの入力を受けたとき
                 kk_rct.move_ip(mv) # こうかとんの座標を移動
+                for ke, val in delta_kk_img.items():
+                    if mv == ke:
+                        kk_img = delta_kk_img[ke]
         
         if check_bound(screen.get_rect(), kk_rct) != (True, True): # 画面内外判定
             for k, mv in delta.items(): # 辞書deltaのkeyとvalueをk, mvに入れる
@@ -83,6 +107,10 @@ def main():
         screen.blit(bb_img, bb_rct) #  爆弾を移動後の座標に表示
         if kk_rct.colliderect(bb_rct): # こうかとんと爆弾の衝突判定
             return  # 衝突していたら、終了
+
+        avx, avy = vx*accs[min(tmr//1000, 9)], vy*accs[min(tmr//1000, 9)]
+        bb_img = bb_imgs[min(tmr//1000, 9)]
+        bb_img.set_colorkey((0,0,0))
 
         pg.display.update()
         clock.tick(1000)

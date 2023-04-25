@@ -9,6 +9,9 @@ def main():
     kk_img = pg.image.load("ex02/fig/3.png")
     kk_img = pg.transform.rotozoom(kk_img, 0, 2.0)
     tmr = 0
+    bb_img = pg.Surface((20,20)) # 爆弾のSurface
+    pg.draw.circle(bb_img,(255,0,0),(10,10),10) # 爆弾を作成
+    bb_img.set_colorkey((0,0,0))  # 爆弾の余白を透明化
 
     while True:
         for event in pg.event.get():

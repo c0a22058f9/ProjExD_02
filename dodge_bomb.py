@@ -81,6 +81,8 @@ def main():
         if not tate: # 縦方向にはみ出ていたら
             vy *= -1 # 縦方向の移動を反転
         screen.blit(bb_img, bb_rct) #  爆弾を移動後の座標に表示
+        if kk_rct.colliderect(bb_rct): # こうかとんと爆弾の衝突判定
+            return  # 衝突していたら、終了
 
         pg.display.update()
         clock.tick(1000)
